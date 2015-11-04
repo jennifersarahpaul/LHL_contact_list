@@ -1,33 +1,51 @@
 class Contact
  
-  attr_accessor :name, :email
+  attr_accessor :id, :name, :email, :phone
 
-  def initialize(name, email)
-    # TODO: assign local variables to instance variables
+  def initialize(id, name, email, phone)
+    @id = id
+    @name = name
+    @email = email
+    @phone = phone
   end
  
   def to_s
-    # TODO: return string representation of Contact
+    "#{id} - #{name}, #{email}, #{phone}"
   end
  
   ## Class Methods
   class << self
-    def create(name, email)
-      # TODO: Will initialize a contact as well as add it to the list of contacts
+
+    def create(name, email, phone)
+
+      unique_id = ContactDatabase.assigns_new_id
+      ContactDatabase.adding_contact_to_array([unique_id, name, email, phone])
     end
- 
-    def find(term)
-      # TODO: Will find and return contacts that contain the term in the first name, last name or email
-    end
- 
+
     def all
-      # TODO: Return the list of contacts, as is
+      list_of_contacts = ContactDatabase.loads_CSV_locally
+      list_of_contacts.map do |contact|
+        Contact.new(contact[0], contact[1], contact[2], contact[3])
+      end
     end
     
     def show(id)
-      # TODO: Show a contact, based on ID
-    end
+      result = self.all.select { |contact| contact.id == id.to_s }
+      result = result.empty? ? nil : result.first
+    end     
     
+    def find(term)
+      to_search = self.all.select do |contact|
+        name_matched = contact.name.downcase.include?(term)
+        email_matched = contact.email.downcase.include?(term)
+        puts contact if name_matched || email_matched
+      end
+    end
+
   end
- 
 end
+
+
+
+
+
