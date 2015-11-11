@@ -25,16 +25,17 @@ def commands_for_user
   end
 end
 
-def verify_email
+def verify_email?
   Contact.all.select do |contact|
-    return "fail" if contact.email.match(@email)
+    return false if contact.email.match(@email)
   end
+  true
 end
 
 def new_contact
   puts "Type in your email address: "
   @email = gets.chomp.to_s
-  if verify_email == "fail"
+  if !verify_email?
     puts "That email is already in the system."
   else
     puts "Type in your name: "
